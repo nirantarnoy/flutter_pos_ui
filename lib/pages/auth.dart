@@ -214,7 +214,7 @@ class _AuthPageState extends State<AuthPage> {
                     TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
             content: Text('ชื่อหรือรหัสผ่านไม่ถูกต้อง'),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 child: Text('OK',
                     style: TextStyle(
                         fontWeight: FontWeight.bold, color: Colors.red)),
@@ -288,13 +288,16 @@ class _AuthPageState extends State<AuthPage> {
                         child: SizedBox(
                           height: 60,
                           width: targetWidth,
-                          child: new RaisedButton(
-                              elevation: 5,
-                              splashColor: Colors.grey,
-                              shape: new RoundedRectangleBorder(
-                                  borderRadius:
-                                      new BorderRadius.circular(15.0)),
-                              color: Colors.lightGreen,
+                          child: ElevatedButton(
+                              style: ButtonStyle(
+                                  elevation: MaterialStateProperty.all(5),
+                                  shape: MaterialStateProperty.all(
+                                    new RoundedRectangleBorder(
+                                        borderRadius:
+                                            new BorderRadius.circular(15.0)),
+                                  ),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colors.lightGreen)),
                               child: new Text('เข้าสู่ระบบ',
                                   style: new TextStyle(
                                       fontSize: 20.0, color: Colors.white)),

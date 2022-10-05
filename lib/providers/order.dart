@@ -9,10 +9,10 @@ import 'package:http/http.dart' as http;
 class OrderData extends ChangeNotifier {
   final String url_to_order_add =
       //  "http://192.168.60.196/goodpos/frontend/web/api/order/addorder";
-      "http://192.168.1.104/goodpos/frontend/web/api/order/addorder";
+      "http://192.168.60.186/goodpos/frontend/web/api/order/addorder";
   final String url_to_order_by_user =
       //   "http://192.168.60.196/goodpos/frontend/web/api/order/list";
-      "http://192.168.1.104/goodpos/frontend/web/api/order/list";
+      "http://192.168.60.186/goodpos/frontend/web/api/order/list";
 
   bool _isLoading = false;
   late List<Order> _orderitem;
@@ -61,7 +61,7 @@ class OrderData extends ChangeNotifier {
     print('data will save order new is ${orderData}');
     try {
       http.Response response;
-      response = await http.post(Uri.encodeFull(url_to_order_add),
+      response = await http.post(Uri.parse(url_to_order_add),
           headers: {'Content-Type': 'application/json'},
           body: json.encode(orderData));
 
@@ -96,7 +96,7 @@ class OrderData extends ChangeNotifier {
     try {
       http.Response response;
       response = await http.post(
-        Uri.encodeFull(url_to_order_by_user),
+        Uri.parse(url_to_order_by_user),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(filterData),
       );

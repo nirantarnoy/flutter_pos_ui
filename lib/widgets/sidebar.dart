@@ -202,12 +202,16 @@ class _SidebarState extends State<Sidebar> {
                 child: SizedBox(
                   height: 30,
                   width: 150,
-                  child: new RaisedButton(
-                      elevation: 0,
-                      splashColor: Colors.grey,
-                      shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(5.0)),
-                      color: Colors.lightGreen,
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                        elevation: MaterialStateProperty.all(0),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(5.0)),
+                        ),
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.lightGreen),
+                      ),
                       child: new Text('ออกจากระบบ',
                           style: new TextStyle(
                               fontSize: 12.0, color: Colors.white)),

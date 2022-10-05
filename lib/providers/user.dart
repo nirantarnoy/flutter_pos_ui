@@ -10,12 +10,12 @@ class UserData with ChangeNotifier {
       //  "http://192.168.1.120/icesystem/frontend/web/api/authen/login";
       // "http://103.253.73.108/icesystem/frontend/web/api/authen/login";
       // "http://103.253.73.108/icesystem/frontend/web/api/authen/login";
-      "http://103.253.73.108/icesystem/frontend/web/api/authen/login";
+      "http://192.168.60.186/icesystem/frontend/web/api/authen/login";
   final String url_to_user_login_qrcode =
       //  "http://192.168.1.120/icesystem/frontend/web/api/authen/login";
       // "http://103.253.73.108/icesystem/frontend/web/api/authen/login";
       // "http://103.253.73.108/icesystem/frontend/web/api/authen/login";
-      "http://103.253.73.108/icesystem/frontend/web/api/authen/loginqrcode";
+      "http://192.168.60.186/icesystem/frontend/web/api/authen/loginqrcode";
 
   late User _authenticatedUser;
   late Timer _authTimer;
@@ -69,7 +69,7 @@ class UserData with ChangeNotifier {
     //   print(username);
     try {
       http.Response response;
-      response = await http.post(Uri.encodeFull(url_to_user_login),
+      response = await http.post(Uri.parse(url_to_user_login),
           headers: {'Content-Type': 'application/json'},
           body: json.encode(loginData));
 
@@ -134,7 +134,7 @@ class UserData with ChangeNotifier {
     print(loginData);
     try {
       http.Response response;
-      response = await http.post(Uri.encodeFull(url_to_user_login_qrcode),
+      response = await http.post(Uri.parse(url_to_user_login_qrcode),
           headers: {'Content-Type': 'application/json'},
           body: json.encode(loginData));
 
@@ -192,47 +192,47 @@ class UserData with ChangeNotifier {
   void autoAuthenticate() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     //   final String token = prefs.getString('token');
-    final String expiryTimeString = prefs.getString('expiryTime');
+    final String? expiryTimeString = prefs.getString('expiryTime');
 
     final DateTime now = DateTime.now();
-    final parsedExpiryTime = DateTime.parse(expiryTimeString);
+    final parsedExpiryTime = DateTime.parse(expiryTimeString!);
     if (parsedExpiryTime.isBefore(now)) {
       //_authenticatedUser = null;
       notifyListeners();
       return;
     }
-    final String emp_code = prefs.getString('emp_code');
-    final String emp_name = prefs.getString('emp_name');
-    final String userId = prefs.getString('user_id');
-    final String emp_photo = prefs.getString('user_photo');
-    final String company_id = prefs.getString('company_id');
-    final String branch_id = prefs.getString('branch_id');
+    final String? emp_code = prefs.getString('emp_code');
+    final String? emp_name = prefs.getString('emp_name');
+    final String? userId = prefs.getString('user_id');
+    final String? emp_photo = prefs.getString('user_photo');
+    final String? company_id = prefs.getString('company_id');
+    final String? branch_id = prefs.getString('branch_id');
     final int tokenLifespan = parsedExpiryTime.difference(now).inSeconds;
     _authenticatedUser = User(
-        id: userId,
-        emp_code: emp_code,
-        emp_name: emp_name,
-        emp_photo: emp_photo,
+        id: userId!,
+        emp_code: emp_code!,
+        emp_name: emp_name!,
+        emp_photo: emp_photo!,
         username: "",
-        company_id: company_id,
-        branch_id: branch_id);
+        company_id: company_id!,
+        branch_id: branch_id!);
     _isauthenuser = true;
     setAuthTimeout(tokenLifespan);
     notifyListeners();
   }
 
   Future<User> getUserAuthenticate() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences? prefs = await SharedPreferences.getInstance();
     late User _currentinfo;
-    if (prefs.getString('user_id') != null) {
+    if (prefs!.getString('user_id') != null) {
       _currentinfo = User(
-          id: prefs.getString('userId'),
-          emp_code: prefs.getString('emp_code'),
-          emp_name: prefs.getString('emp_name'),
-          emp_photo: prefs.getString('emp_photo'),
+          id: prefs.getString('userId').toString(),
+          emp_code: prefs.getString('emp_code').toString(),
+          emp_name: prefs.getString('emp_name').toString(),
+          emp_photo: prefs.getString('emp_photo').toString(),
           username: "",
-          company_id: prefs.getString('company_id'),
-          branch_id: prefs.getString('branch_id'));
+          company_id: prefs.getString('company_id').toString(),
+          branch_id: prefs.getString('branch_id').toString());
       return _currentinfo;
     } else {
       _currentinfo = User(

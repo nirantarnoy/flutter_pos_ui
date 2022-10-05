@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ProductData with ChangeNotifier {
   final String url_to_product_list =
       //   "http://192.168.60.196/goodpos/frontend/web/api/product/list";
-      "http://192.168.1.104/goodpos/frontend/web/api/product/list";
+      "http://192.168.60.186/goodpos/frontend/web/api/product/list";
 
   late List<Products> _product;
   List<Products> get listproduct => _product;
@@ -104,7 +104,7 @@ class ProductData with ChangeNotifier {
     try {
       http.Response response;
       response = await http.post(
-        Uri.encodeFull(url_to_product_list),
+        Uri.parse(url_to_product_list),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(filterData),
       );

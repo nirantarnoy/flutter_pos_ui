@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ProductgroupData with ChangeNotifier {
   final String url_to_productgroup_list =
       //   "http://192.168.60.196/goodpos/frontend/web/api/productgroup/list";
-      "http://192.168.1.104/goodpos/frontend/web/api/productgroup/list";
+      "http://192.168.60.186/goodpos/frontend/web/api/productgroup/list";
 
   late List<ProductGroupMenu> _productgroup;
   List<ProductGroupMenu> get listproductgroup => _productgroup;
@@ -32,10 +32,10 @@ class ProductgroupData with ChangeNotifier {
   }
 
   Future<dynamic> fetchProductgroup() async {
-    String _current_route_id = "";
-    String _company_id = "";
-    String _branch_id = "";
-    String _car_id = "";
+    String? _current_route_id = "";
+    String? _company_id = "";
+    String? _branch_id = "";
+    String? _car_id = "";
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.getString('user_id') != null) {
       _current_route_id = prefs.getString('emp_route_id');
@@ -55,7 +55,7 @@ class ProductgroupData with ChangeNotifier {
     try {
       http.Response response;
       response = await http.post(
-        Uri.encodeFull(url_to_productgroup_list),
+        Uri.parse(url_to_productgroup_list),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(filterData),
       );

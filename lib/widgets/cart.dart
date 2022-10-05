@@ -186,7 +186,7 @@ class _CartareaState extends State<Cartarea> {
               Provider.of<ProductData>(context, listen: false)
                   .removecartitem(index);
 
-              Scaffold.of(context).showSnackBar(SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Row(
                   children: <Widget>[
                     Icon(
@@ -304,13 +304,13 @@ class _CartareaState extends State<Cartarea> {
                   title: Text('แจ้งเตือน'),
                   content: Text('ต้องการลบข้อมูลใช่หรือไม่'),
                   actions: <Widget>[
-                    FlatButton(
+                    TextButton(
                       onPressed: () {
                         Navigator.of(context).pop(true);
                       },
                       child: Text('ยืนยัน'),
                     ),
-                    FlatButton(
+                    TextButton(
                       onPressed: () {
                         Navigator.of(context).pop(false);
                       },
@@ -327,7 +327,7 @@ class _CartareaState extends State<Cartarea> {
               //       .removeOrderDetail(orders[index].line_id);
               //   orders.removeAt(index);
               // });
-              Scaffold.of(context).showSnackBar(SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Row(
                   children: <Widget>[
                     Icon(
@@ -528,13 +528,18 @@ class _CartareaState extends State<Cartarea> {
                             builder: (context, _orderitems, _) => _orderitems
                                         .orderItems.length >
                                     0
-                                ? RaisedButton(
-                                    elevation: 0,
-                                    splashColor: Colors.grey[300],
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            new BorderRadius.circular(5.0)),
-                                    color: Colors.grey[300],
+                                ? ElevatedButton(
+                                    style: ButtonStyle(
+                                      elevation: MaterialStateProperty.all(0),
+                                      shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                new BorderRadius.circular(5.0)),
+                                      ),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.grey[300]),
+                                    ),
                                     child: Text('ล้างทั้งหมด',
                                         style: TextStyle(
                                           fontSize: 11.0,
@@ -836,14 +841,17 @@ class _CartareaState extends State<Cartarea> {
                 elevation: 1,
                 child: SizedBox(
                   height: double.infinity,
-                  child: RaisedButton(
-                    elevation: 0,
-                    splashColor: Colors.grey,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(5.0)),
-                    color: _btconnected == true
-                        ? Colors.lightGreen
-                        : Color.fromARGB(255, 255, 170, 59),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        elevation: MaterialStateProperty.all(0),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(5.0)),
+                        ),
+                        backgroundColor: MaterialStateProperty.all(
+                            _btconnected == true
+                                ? Colors.lightGreen
+                                : Color.fromARGB(255, 255, 170, 59))),
                     child: const Text('ชำระเงิน',
                         style: TextStyle(
                           fontSize: 16.0,

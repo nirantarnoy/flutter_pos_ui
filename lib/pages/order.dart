@@ -62,13 +62,13 @@ class _OrderPageState extends State<OrderPage> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () {},
                           child: Text("ยกเลิก"),
                         ),
                       ),
                       Expanded(
-                        child: RaisedButton(
+                        child: ElevatedButton(
                           onPressed: () {},
                           child: Text("ลบ"),
                         ),

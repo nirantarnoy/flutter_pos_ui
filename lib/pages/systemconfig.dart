@@ -101,7 +101,7 @@ class _SystemconfigPageState extends State<SystemconfigPage> {
     Duration duration: const Duration(seconds: 3),
   }) async {
     await new Future.delayed(new Duration(milliseconds: 100));
-    Scaffold.of(context).showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       new SnackBar(
         content: new Text(
           message,
@@ -159,8 +159,10 @@ class _SystemconfigPageState extends State<SystemconfigPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(children: <Widget>[
-                    RaisedButton(
-                      color: Colors.blue,
+                    ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.blue)),
                       onPressed: () {
                         initPlatformState();
                       },
@@ -172,8 +174,10 @@ class _SystemconfigPageState extends State<SystemconfigPage> {
                     SizedBox(
                       width: 20,
                     ),
-                    RaisedButton(
-                      color: _connected! ? Colors.red : Colors.green,
+                    ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              _connected! ? Colors.red : Colors.green)),
                       onPressed: _connected! ? _disconnect : _connect,
                       child: Text(
                         _connected! ? 'Disconnect' : 'Connect',
@@ -183,8 +187,10 @@ class _SystemconfigPageState extends State<SystemconfigPage> {
                     SizedBox(
                       width: 20,
                     ),
-                    RaisedButton(
-                      color: Colors.grey,
+                    ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.grey)),
                       onPressed: _testPrint,
                       child: Text(
                         'Print Test',

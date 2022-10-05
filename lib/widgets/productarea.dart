@@ -552,7 +552,7 @@ class _ProductareaState extends State<Productarea> {
                 //     .orderItems
                 //     .length;
                 // print('item cart is ${x}');
-                Scaffold.of(context).showSnackBar(SnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   behavior: SnackBarBehavior.floating,
                   duration: Duration(milliseconds: 300),
                   content: Row(
