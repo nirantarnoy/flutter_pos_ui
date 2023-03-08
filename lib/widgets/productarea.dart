@@ -34,8 +34,9 @@ class _ProductareaState extends State<Productarea> {
   @override
   void initState() {
     _btconnect = printerstatus();
+
     Provider.of<ProductgroupData>(context, listen: false).fetchProductgroup();
-    Provider.of<ProductData>(context, listen: false).fetchProducts('โปรโมชั่น');
+    Provider.of<ProductData>(context, listen: false).fetchProductData('');
     super.initState();
   }
 
@@ -171,220 +172,51 @@ class _ProductareaState extends State<Productarea> {
           Expanded(
             flex: 5,
             child: Column(children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Text(
-                      'รายการสินค้า',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black54,
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        'รายการสินค้า',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: SingleChildScrollView(
-              //         scrollDirection: Axis.horizontal,
-              //         child: Padding(
-              //           padding: const EdgeInsets.all(8.0),
-              //           child: Row(
-              //             children: <Widget>[
-              //               Container(
-              //                 height: 120,
-              //                 width: 100,
-              //                 margin: EdgeInsets.only(right: 5),
-              //                 decoration: BoxDecoration(
-              //                   borderRadius: BorderRadius.circular(10),
-              //                   color: Colors.white,
-              //                 ),
-              //                 child: Center(
-              //                   child: Padding(
-              //                     padding: const EdgeInsets.all(8.0),
-              //                     child: Image.asset('assets/images/01.png'),
-              //                   ),
-              //                 ),
-              //               ),
-              //               Container(
-              //                 height: 120,
-              //                 width: 100,
-              //                 margin: EdgeInsets.only(right: 5),
-              //                 decoration: BoxDecoration(
-              //                   borderRadius: BorderRadius.circular(10),
-              //                   color: Colors.white,
-              //                 ),
-              //                 child: Center(
-              //                   child: Padding(
-              //                     padding: const EdgeInsets.all(8.0),
-              //                     child: Image.asset('assets/images/02.png'),
-              //                   ),
-              //                 ),
-              //               ),
-              //               Container(
-              //                 height: 120,
-              //                 width: 100,
-              //                 margin: EdgeInsets.only(right: 5),
-              //                 decoration: BoxDecoration(
-              //                   borderRadius: BorderRadius.circular(10),
-              //                   color: Colors.white,
-              //                 ),
-              //                 child: Center(
-              //                   child: Padding(
-              //                     padding: const EdgeInsets.all(8.0),
-              //                     child: Image.asset('assets/images/02.png'),
-              //                   ),
-              //                 ),
-              //               ),
-              //               Container(
-              //                 height: 120,
-              //                 width: 100,
-              //                 margin: EdgeInsets.only(right: 5),
-              //                 decoration: BoxDecoration(
-              //                   borderRadius: BorderRadius.circular(10),
-              //                   color: Colors.white,
-              //                 ),
-              //                 child: Center(
-              //                   child: Padding(
-              //                     padding: const EdgeInsets.all(8.0),
-              //                     child: Image.asset('assets/images/02.png'),
-              //                   ),
-              //                 ),
-              //               ),
-              //               Container(
-              //                 height: 120,
-              //                 width: 100,
-              //                 margin: EdgeInsets.only(right: 5),
-              //                 decoration: BoxDecoration(
-              //                   borderRadius: BorderRadius.circular(10),
-              //                   color: Colors.white,
-              //                 ),
-              //                 child: Center(
-              //                   child: Padding(
-              //                     padding: const EdgeInsets.all(8.0),
-              //                     child: Image.asset('assets/images/01.png'),
-              //                   ),
-              //                 ),
-              //               ),
-              //               Container(
-              //                 height: 120,
-              //                 width: 100,
-              //                 margin: EdgeInsets.only(right: 5),
-              //                 decoration: BoxDecoration(
-              //                   borderRadius: BorderRadius.circular(10),
-              //                   color: Colors.white,
-              //                 ),
-              //                 child: Center(
-              //                   child: Padding(
-              //                     padding: const EdgeInsets.all(8.0),
-              //                     child: Image.asset('assets/images/02.png'),
-              //                   ),
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              // Container(
-              //   height: 120,
-              //   child: Expanded(
-              //     flex: 1,
-              //     child: Padding(
-              //       padding: const EdgeInsets.all(8.0),
-              //       child: SingleChildScrollView(
-              //         scrollDirection: Axis.horizontal,
-              //         child: Row(
-              //           children: <Widget>[
-              //             Consumer<ProductData>(
-              //                 builder: (context, _product, _) =>
-              //                     _buildProducts(_product.listproduct)),
-              //           ],
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              Container(
-                // height: 270,
-                width: double.infinity,
-                child: Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Consumer<ProductData>(
-                          builder: (context, _product, _) =>
-                              _buildProductgrid(_product.listproduct)),
+              Expanded(
+                flex: 6,
+                child: Container(
+                  // height: 270,
+                  width: double.infinity,
+                  child: Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Consumer<ProductData>(
+                            builder: (context, _product, _) =>
+                                _buildProductgrid(_product.listproduct)),
+                      ),
                     ),
                   ),
                 ),
               ),
             ]),
           ),
-          // Expanded(
-          //   flex: 1,
-          //   child: Container(
-          //       color: Colors.white,
-          //       width: double.infinity,
-          //       margin: EdgeInsets.only(
-          //         right: 1.0,
-          //       ),
-          //       child: Padding(
-          //         padding: const EdgeInsets.all(8.0),
-          //         child: Row(
-          //           children: <Widget>[
-          //             Expanded(
-          //               flex: 4,
-          //               child: Row(
-          //                 children: <Widget>[
-          //                   CircleAvatar(
-          //                     backgroundColor: Colors.lightGreen,
-          //                     child: Icon(
-          //                       Icons.person,
-          //                       color: Colors.white,
-          //                     ),
-          //                   ),
-          //                   SizedBox(
-          //                     width: 5,
-          //                   ),
-          //                   Text('Admin'),
-          //                 ],
-          //               ),
-          //             ),
-          //             // Expanded(
-          //             //   flex: 1,
-          //             //   child: Row(
-          //             //       mainAxisAlignment: MainAxisAlignment.end,
-          //             //       children: <Widget>[
-          //             //         Icon(
-          //             //           _btconnect == true
-          //             //               ? Icons.print_rounded
-          //             //               : Icons.print_disabled_rounded,
-          //             //           color: _btconnect == true
-          //             //               ? Colors.lightGreen
-          //             //               : Colors.red,
-          //             //         ),
-          //             //         Text('connect is ${_btconnect}'),
-          //             //       ]),
-          //             // ),
-          //           ],
-          //         ),
-          //       )),
-          // ),
         ],
       ),
     );
   }
 
   Widget _buildProductMenu(List<ProductGroupMenu> menu) {
-    print('list count is ${menu.length}');
+    // print('list count is ${menu.length}');
     Widget listItems;
 
     if (menu.isNotEmpty) {
@@ -433,7 +265,7 @@ class _ProductareaState extends State<Productarea> {
                   });
                   setState(() {
                     Provider.of<ProductData>(context, listen: false)
-                        .fetchProducts('${menu[index].name}');
+                        .fetchProductData('${menu[index].name}');
                   });
                 });
           });
@@ -502,11 +334,12 @@ class _ProductareaState extends State<Productarea> {
   }
 
   Widget _buildProductgrid(List<Products> products) {
-    print('list count is ${products.length}');
+    print('list product count is ${products.length}');
     Widget listItems;
 
     if (products.isNotEmpty) {
       listItems = GridView.builder(
+        scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: products.length,
         physics: ScrollPhysics(),

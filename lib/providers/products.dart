@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ProductData with ChangeNotifier {
   final String url_to_product_list =
       //   "http://192.168.60.196/goodpos/frontend/web/api/product/list";
-      "http://192.168.60.186/goodpos/frontend/web/api/product/list";
+      "http://192.168.60.195/goodpos/frontend/web/api/product/list";
 
   late List<Products> _product;
   List<Products> get listproduct => _product;
@@ -85,19 +85,8 @@ class ProductData with ChangeNotifier {
     });
   }
 
-  Future<dynamic> fetchProducts(String productgroup) async {
-    // String _current_route_id = "";
-    // String _company_id = "";
-    // String _branch_id = "";
-    // String _car_id = "";
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // if (prefs.getString('user_id') != null) {
-    //   _current_route_id = prefs.getString('emp_route_id');
-    //   _company_id = prefs.getString('company_id');
-    //   _branch_id = prefs.getString('branch_id');
-    //   _car_id = prefs.getString('emp_car_id');
-    // }
-
+  Future<dynamic> fetchProductData(String productgroup) async {
+    print('finding product data for ${productgroup}');
     final Map<String, dynamic> filterData = {'productgroup': productgroup};
     // _isLoading = true;
     notifyListeners();
@@ -112,7 +101,7 @@ class ProductData with ChangeNotifier {
       if (response.statusCode == 200) {
         Map<String, dynamic> res = json.decode(response.body);
         List<Products> data = [];
-        print('data productgroup length is ${res["data"].length}');
+        print('data product length is ${res["data"].length}');
         //    print('data server is ${res["data"]}');
 
         if (res == null) {
@@ -137,10 +126,12 @@ class ProductData with ChangeNotifier {
         notifyListeners();
         return listproduct;
       }
-    } catch (_) {}
+    } catch (_) {
+      print('something went wrong!');
+    }
   }
 
-  Future<List> findProductgroup(String query) async {
+  Future<List> findProductgroupx(String query) async {
     await Future.delayed(Duration(microseconds: 500));
     return listproduct
         .where((item) => item.name.toLowerCase().contains(query))

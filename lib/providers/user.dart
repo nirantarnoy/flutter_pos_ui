@@ -10,12 +10,12 @@ class UserData with ChangeNotifier {
       //  "http://192.168.1.120/icesystem/frontend/web/api/authen/login";
       // "http://103.253.73.108/icesystem/frontend/web/api/authen/login";
       // "http://103.253.73.108/icesystem/frontend/web/api/authen/login";
-      "http://192.168.60.186/icesystem/frontend/web/api/authen/login";
+      "http://192.168.60.195/icesystem/frontend/web/api/authen/login";
   final String url_to_user_login_qrcode =
       //  "http://192.168.1.120/icesystem/frontend/web/api/authen/login";
       // "http://103.253.73.108/icesystem/frontend/web/api/authen/login";
       // "http://103.253.73.108/icesystem/frontend/web/api/authen/login";
-      "http://192.168.60.186/icesystem/frontend/web/api/authen/loginqrcode";
+      "http://192.168.60.195/icesystem/frontend/web/api/authen/loginqrcode";
 
   late User _authenticatedUser;
   late Timer _authTimer;

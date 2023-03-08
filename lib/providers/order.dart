@@ -9,10 +9,10 @@ import 'package:http/http.dart' as http;
 class OrderData extends ChangeNotifier {
   final String url_to_order_add =
       //  "http://192.168.60.196/goodpos/frontend/web/api/order/addorder";
-      "http://192.168.60.186/goodpos/frontend/web/api/order/addorder";
+      "http://192.168.60.195/goodpos/frontend/web/api/order/addorder";
   final String url_to_order_by_user =
       //   "http://192.168.60.196/goodpos/frontend/web/api/order/list";
-      "http://192.168.60.186/goodpos/frontend/web/api/order/list";
+      "http://192.168.60.195/goodpos/frontend/web/api/order/list";
 
   bool _isLoading = false;
   late List<Order> _orderitem;

@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ProductgroupData with ChangeNotifier {
   final String url_to_productgroup_list =
       //   "http://192.168.60.196/goodpos/frontend/web/api/productgroup/list";
-      "http://192.168.60.186/goodpos/frontend/web/api/productgroup/list";
+      "http://192.168.60.195/goodpos/frontend/web/api/productgroup/list";
 
   late List<ProductGroupMenu> _productgroup;
   List<ProductGroupMenu> get listproductgroup => _productgroup;
@@ -37,18 +37,15 @@ class ProductgroupData with ChangeNotifier {
     String? _branch_id = "";
     String? _car_id = "";
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.getString('user_id') != null) {
-      _current_route_id = prefs.getString('emp_route_id');
-      _company_id = prefs.getString('company_id');
-      _branch_id = prefs.getString('branch_id');
-      _car_id = prefs.getString('emp_car_id');
-    }
+    // if (prefs.getString('user_id') != null) {
+    //   _current_route_id = prefs.getString('emp_route_id');
+    //   _company_id = prefs.getString('company_id');
+    //   _branch_id = prefs.getString('branch_id');
+    //   _car_id = prefs.getString('emp_car_id');
+    // }
 
     final Map<String, dynamic> filterData = {
-      'route_id': _current_route_id,
-      'company_id': _company_id,
-      'branch_id': _branch_id,
-      'car_id': _car_id,
+      'group': '',
     };
     // _isLoading = true;
     notifyListeners();
