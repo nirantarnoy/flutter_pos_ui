@@ -388,6 +388,7 @@ class _ProductareaState extends State<Productarea> {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   behavior: SnackBarBehavior.floating,
                   duration: Duration(milliseconds: 300),
+                  width: MediaQuery.of(context).size.width / 3,
                   content: Row(
                     children: <Widget>[
                       Icon(

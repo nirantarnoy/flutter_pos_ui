@@ -1,6 +1,11 @@
 import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_pos_ui/api/pdf_api.dart';
+import 'package:flutter_pos_ui/api/pdf_invoice_api.dart';
+import 'package:flutter_pos_ui/models/customer.dart';
+import 'package:flutter_pos_ui/models/invoice.dart';
 import 'package:flutter_pos_ui/models/itemcart.dart';
+import 'package:flutter_pos_ui/models/supplier.dart';
 import 'package:flutter_pos_ui/providers/order.dart';
 import 'package:flutter_pos_ui/providers/products.dart';
 import 'package:intl/intl.dart';
@@ -17,6 +22,7 @@ class _CartareaState extends State<Cartarea> {
   double _beforechange = 0;
   List<ItemCart> listdata = [];
   bool _btconnected = false;
+  double _ordertotalamount = 0;
   double _payamount = 0;
   double _changeamount = 0;
 
@@ -35,10 +41,28 @@ class _CartareaState extends State<Cartarea> {
     super.initState();
   }
 
-  void paycalculate(double pay) {
+  void setOrderamount() {
+    setState(() {
+      _ordertotalamount =
+          Provider.of<ProductData>(context, listen: false).sumCartTotal;
+    });
+    print(_ordertotalamount);
+  }
+
+  void paycalculate(double pay, setState) {
     setState(() {
       _payamount += pay;
+      _changeamount = (_payamount - _ordertotalamount);
     });
+    print(_payamount);
+  }
+
+  void paybalance(double pay, setState) {
+    setState(() {
+      _payamount = pay;
+      _changeamount = (_payamount - _ordertotalamount);
+    });
+    print(_payamount);
   }
 
   bool printerstatus() {
@@ -540,11 +564,17 @@ class _CartareaState extends State<Cartarea> {
                                           MaterialStateProperty.all(
                                               Colors.grey[300]),
                                     ),
-                                    child: Text('ล้างทั้งหมด',
+                                    child: Consumer<ProductData>(
+                                      builder: (context, _orderitems, _) =>
+                                          Text(
+                                        'ลบ ${_orderitems.orderItems.length} รายการ',
                                         style: TextStyle(
                                           fontSize: 11.0,
                                           color: Colors.red[300],
-                                        )),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                                     onPressed: () {
                                       showDialog(
                                         context: context,
@@ -811,14 +841,14 @@ class _CartareaState extends State<Cartarea> {
                                   child: Align(
                                     alignment: Alignment.centerRight,
                                     child: Consumer<ProductData>(
-                                      builder: (context, _itemcarts, _) => Text(
-                                        '${_itemcarts.sumCartTotal}',
-                                        style: TextStyle(
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
+                                        builder: (context, _itemcarts, _) =>
+                                            Text(
+                                              '${_itemcarts.sumCartTotal}',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            )),
                                   ),
                                 ),
                               ],
@@ -859,483 +889,674 @@ class _CartareaState extends State<Cartarea> {
                           fontWeight: FontWeight.bold,
                         )),
                     onPressed: () {
+                      setOrderamount();
                       showDialog(
                         context: context,
                         barrierDismissible: false,
-                        builder: (context) => Dialog(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Container(
-                            width: 700,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  const Text(
-                                    'ยืนยันจบการขาย',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
-                                  ),
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-                                  Row(
+                        builder: (context) {
+                          return StatefulBuilder(
+                              builder: (context, StateSetter setState) {
+                            return Dialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Container(
+                                width: 700,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.grey[300],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                      Expanded(
-                                        flex: 4,
-                                        child: Container(
-                                          height: 300,
-                                          child: Column(children: <Widget>[
-                                            const Text(
-                                              "ยอดเงิน",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.black45,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Container(
-                                              width: 150,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.grey[200],
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: Center(
-                                                child: Consumer<ProductData>(
-                                                  builder: (context, _itemcarts,
-                                                          _) =>
-                                                      Text(
-                                                    "${_itemcarts.sumCartTotal}",
-                                                    style: TextStyle(
-                                                      fontSize: 25,
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              "รับชำระ",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.black45,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Container(
-                                              width: 150,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.grey[200],
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: Center(
-                                                child: Text(
-                                                  "${_payamount}",
-                                                  style: TextStyle(
-                                                    fontSize: 25,
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              "เงินทอน",
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.black45,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Container(
-                                              width: 150,
-                                              decoration: BoxDecoration(
-                                                  color: Colors.grey[200],
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: Center(
-                                                child: Text(
-                                                  "${_changeamount}",
-                                                  style: TextStyle(
-                                                    fontSize: 25,
-                                                    color: Colors.black,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ]),
-                                        ),
+                                      const SizedBox(
+                                        height: 5,
                                       ),
-                                      Expanded(
-                                        flex: 4,
-                                        child: Container(
-                                          height: 300,
-                                          child: Column(
-                                            children: [
-                                              Row(children: <Widget>[
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: GestureDetector(
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color:
-                                                              Colors.lightGreen,
-                                                          borderRadius:
-                                                              BorderRadius.only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    20),
-                                                          ),
-                                                        ),
-                                                        width: 100,
-                                                        height: 50,
-                                                        child: Center(
-                                                            child: Text(
-                                                          "1",
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        )),
-                                                      ),
-                                                      onTap: () {
-                                                        print("pay 1");
-                                                        setState(() {
-                                                          _payamount = 1.0;
-                                                        });
-                                                      },
-                                                    ),
+                                      const Text(
+                                        'ยืนยันจบการขาย',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
+                                      ),
+                                      const SizedBox(
+                                        height: 12,
+                                      ),
+                                      Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            flex: 4,
+                                            child: Container(
+                                              height: 300,
+                                              child: Column(children: <Widget>[
+                                                const Text(
+                                                  "ยอดเงิน",
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.black54,
                                                   ),
                                                 ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: GestureDetector(
-                                                      onTap: () =>
-                                                          paycalculate(2),
-                                                      child: Container(
-                                                        color:
-                                                            Colors.lightGreen,
-                                                        width: 100,
-                                                        height: 50,
-                                                        child: Center(
-                                                            child: Text(
-                                                          "2",
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        )),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Container(
+                                                  width: 150,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: Center(
+                                                    child: Text(
+                                                      "${_ordertotalamount}",
+                                                      style: TextStyle(
+                                                        fontSize: 25,
+                                                        color: Colors.black,
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.lightGreen,
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  20),
-                                                        ),
+                                                Text(
+                                                  "รับชำระ",
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.black54,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Container(
+                                                  width: 150,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: Center(
+                                                    child: Text(
+                                                      "${_payamount}",
+                                                      style: TextStyle(
+                                                        fontSize: 25,
+                                                        color: Colors.black,
                                                       ),
-                                                      width: 100,
-                                                      height: 50,
-                                                      child: Center(
-                                                          child: Text(
-                                                        "5",
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      )),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Text(
+                                                  "เงินทอน",
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.black54,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Container(
+                                                  width: 150,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: Center(
+                                                    child: Text(
+                                                      "${_changeamount}",
+                                                      style: TextStyle(
+                                                        fontSize: 25,
+                                                        color: Colors.black,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ]),
-                                              Row(children: <Widget>[
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      color: Colors.lightGreen,
-                                                      width: 100,
-                                                      height: 50,
-                                                      child: Center(
-                                                          child: Text(
-                                                        "10",
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      )),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      color: Colors.lightGreen,
-                                                      width: 100,
-                                                      height: 50,
-                                                      child: Center(
-                                                          child: Text(
-                                                        "20",
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      )),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      color: Colors.lightGreen,
-                                                      width: 100,
-                                                      height: 50,
-                                                      child: Center(
-                                                          child: Text(
-                                                        "50",
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      )),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ]),
-                                              Row(children: <Widget>[
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      color: Colors.lightGreen,
-                                                      width: 100,
-                                                      height: 50,
-                                                      child: Center(
-                                                          child: Text(
-                                                        "100",
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      )),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      color: Colors.lightGreen,
-                                                      width: 100,
-                                                      height: 50,
-                                                      child: Center(
-                                                          child: Text(
-                                                        "500",
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      )),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      color: Colors.lightGreen,
-                                                      width: 100,
-                                                      height: 50,
-                                                      child: Center(
-                                                          child: Text(
-                                                        "1000",
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      )),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ]),
-                                              Row(children: <Widget>[
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.lightGreen,
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          bottomLeft:
-                                                              Radius.circular(
-                                                                  20),
-                                                        ),
-                                                      ),
-                                                      width: 100,
-                                                      height: 50,
-                                                      child: Center(
-                                                          child: Text(
-                                                        "ชำระเต็มจำนวน",
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      )),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Container(
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.red[500],
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          bottomRight:
-                                                              Radius.circular(
-                                                                  20),
-                                                        ),
-                                                      ),
-                                                      width: 100,
-                                                      height: 50,
-                                                      child: Center(
-                                                          child: Text(
-                                                        "CLEAR",
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      )),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ]),
-                                            ],
+                                            ),
                                           ),
-                                        ),
+                                          Expanded(
+                                            flex: 4,
+                                            child: Container(
+                                              height: 300,
+                                              child: Column(
+                                                children: [
+                                                  Row(children: <Widget>[
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: GestureDetector(
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                        20),
+                                                              ),
+                                                            ),
+                                                            width: 100,
+                                                            height: 50,
+                                                            child: Center(
+                                                                child: Text(
+                                                              "1",
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            )),
+                                                          ),
+                                                          onTap: () {
+                                                            paycalculate(
+                                                                1, setState);
+                                                            // setState(() {
+                                                            //   _payamount = (_payamount + 1.0);
+                                                            // });
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: GestureDetector(
+                                                          onTap: () =>
+                                                              paycalculate(
+                                                                  2, setState),
+                                                          child: Container(
+                                                            color: Colors.white,
+                                                            width: 100,
+                                                            height: 50,
+                                                            child: Center(
+                                                                child: Text(
+                                                              "2",
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            )),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            paycalculate(
+                                                                5, setState);
+                                                          },
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .only(
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                        20),
+                                                              ),
+                                                            ),
+                                                            width: 100,
+                                                            height: 50,
+                                                            child: Center(
+                                                                child: Text(
+                                                              "5",
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            )),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ]),
+                                                  Row(children: <Widget>[
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            paycalculate(
+                                                                10, setState);
+                                                          },
+                                                          child: Container(
+                                                            color: Colors.white,
+                                                            width: 100,
+                                                            height: 50,
+                                                            child: Center(
+                                                                child: Text(
+                                                              "10",
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            )),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            paycalculate(
+                                                                20, setState);
+                                                          },
+                                                          child: Container(
+                                                            color: Colors.white,
+                                                            width: 100,
+                                                            height: 50,
+                                                            child: Center(
+                                                                child: Text(
+                                                              "20",
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            )),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            paycalculate(
+                                                                50, setState);
+                                                          },
+                                                          child: Container(
+                                                            color: Colors.white,
+                                                            width: 100,
+                                                            height: 50,
+                                                            child: Center(
+                                                                child: Text(
+                                                              "50",
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            )),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ]),
+                                                  Row(children: <Widget>[
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            paycalculate(
+                                                                100, setState);
+                                                          },
+                                                          child: Container(
+                                                            color: Colors.white,
+                                                            width: 100,
+                                                            height: 50,
+                                                            child: Center(
+                                                                child: Text(
+                                                              "100",
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            )),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            paycalculate(
+                                                                500, setState);
+                                                          },
+                                                          child: Container(
+                                                            color: Colors.white,
+                                                            width: 100,
+                                                            height: 50,
+                                                            child: Center(
+                                                                child: Text(
+                                                              "500",
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            )),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            paycalculate(
+                                                                1000, setState);
+                                                          },
+                                                          child: Container(
+                                                            color: Colors.white,
+                                                            width: 100,
+                                                            height: 50,
+                                                            child: Center(
+                                                                child: Text(
+                                                              "1000",
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            )),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ]),
+                                                  Row(children: <Widget>[
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            paybalance(
+                                                                _ordertotalamount,
+                                                                setState);
+                                                          },
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors
+                                                                  .lightGreen,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .only(
+                                                                bottomLeft: Radius
+                                                                    .circular(
+                                                                        20),
+                                                              ),
+                                                            ),
+                                                            width: 100,
+                                                            height: 50,
+                                                            child: Center(
+                                                                child: Text(
+                                                              "ชำระเต็มจำนวน",
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            )),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            setState(
+                                                              () {
+                                                                _payamount = 0;
+                                                                _changeamount =
+                                                                    0;
+                                                              },
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors
+                                                                  .red[500],
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .only(
+                                                                bottomRight:
+                                                                    Radius
+                                                                        .circular(
+                                                                            20),
+                                                              ),
+                                                            ),
+                                                            width: 100,
+                                                            height: 50,
+                                                            child: Center(
+                                                                child: Text(
+                                                              "CLEAR",
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            )),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ]),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
+                                      Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: _payamount >=
+                                                    _ordertotalamount
+                                                ? MaterialButton(
+                                                    color: Colors.lightGreen,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                    onPressed: () async {
+                                                      final result =
+                                                          await Provider.of<
+                                                                      OrderData>(
+                                                                  context,
+                                                                  listen: false)
+                                                              .addOrder(
+                                                                  "1",
+                                                                  listdata,
+                                                                  "1",
+                                                                  "0");
+
+                                                      // _slipPrint(listdata);
+                                                      if (result == true) {
+                                                        List<InvoiceItem>
+                                                            _invoiceitem = [];
+                                                        if (listdata
+                                                            .isNotEmpty) {
+                                                          listdata.forEach(
+                                                              (element) {
+                                                            InvoiceItem items = InvoiceItem(
+                                                                description:
+                                                                    element
+                                                                        .name,
+                                                                date: DateTime
+                                                                    .now(),
+                                                                quantity:
+                                                                    int.parse(
+                                                                        element
+                                                                            .qty),
+                                                                vat: 0,
+                                                                unitPrice: double
+                                                                    .parse(element
+                                                                        .price));
+
+                                                            _invoiceitem
+                                                                .add(items);
+                                                          });
+                                                        }
+
+                                                        final invoice = Invoice(
+                                                            customer: Customer(
+                                                              address: 'cvcvcv',
+                                                              name: 'Tarlek',
+                                                            ),
+                                                            info: InvoiceInfo(
+                                                              description:
+                                                                  'My description',
+                                                              number:
+                                                                  'INV23-00001',
+                                                              date: DateTime
+                                                                  .now(),
+                                                              dueDate: DateTime
+                                                                  .now(),
+                                                            ),
+                                                            // items: [],
+                                                            items: _invoiceitem,
+                                                            supplier: Supplier(
+                                                                name:
+                                                                    "Niran Wangyart",
+                                                                address:
+                                                                    '123/345',
+                                                                paymentInfo:
+                                                                    'xxxx'));
+                                                        final pdfFile =
+                                                            await PdfInvoiceApi
+                                                                .generate(
+                                                                    invoice);
+                                                        PdfApi.openFile(
+                                                            pdfFile);
+
+                                                        Provider.of<ProductData>(
+                                                                context,
+                                                                listen: false)
+                                                            .clearcartitem();
+
+                                                        setState(() {
+                                                          _payamount = 0;
+                                                          _changeamount = 0;
+                                                        });
+                                                        Navigator.of(context)
+                                                            .pop(false);
+                                                      }
+                                                    },
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Text(
+                                                          'บันทึกการขาย',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                          )),
+                                                    ),
+                                                  )
+                                                : SizedBox(),
+                                          ),
+                                          Spacer(),
+                                          Expanded(
+                                            child: MaterialButton(
+                                              color: Colors.grey[800],
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5)),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _payamount = 0;
+                                                  _changeamount = 0;
+                                                });
+                                                Navigator.of(context)
+                                                    .pop(false);
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text('ยกเลิก',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                    )),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
                                     ],
                                   ),
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: MaterialButton(
-                                          color: Colors.lightGreen,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          onPressed: () {
-                                            Future<bool> result =
-                                                Provider.of<OrderData>(context,
-                                                        listen: false)
-                                                    .addOrder("1", listdata,
-                                                        "1", "0");
-
-                                            _slipPrint(listdata);
-
-                                            Provider.of<ProductData>(context,
-                                                    listen: false)
-                                                .clearcartitem();
-                                            Navigator.of(context).pop(false);
-                                          },
-                                          child: Text('จบการขาย'),
-                                        ),
-                                      ),
-                                      Spacer(),
-                                      Expanded(
-                                        child: MaterialButton(
-                                          color: Colors.grey[300],
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10)),
-                                          onPressed: () {
-                                            Navigator.of(context).pop(false);
-                                          },
-                                          child: Text('ยกเลิก'),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
+                            );
+                          });
+                        },
                       );
                     },
                   ),
